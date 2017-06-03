@@ -11,6 +11,7 @@
 volatile int floor = 0;
 int led = 0;
 int retCode = 1;
+unsigned char floorSelected = FALSE;
 CANmsg_t rxMsg;
 unsigned char rxdata[8];
 unsigned char txdata[8];
@@ -74,21 +75,29 @@ Init_Car_Controller()
   //configure digital input for limit switches  
   DDRAD   = DDRAD_INIT;      
    
-  // configure LED port data direction to output
-  SET_BITS(LED_PORT_DDR, LEDS_ON);
+  // configure floor request LED port data direction to output
+  SET_BITS(LED_PORT_DDR, DOOR_LEDS_ON);
   // turn on both LEDs
-  SET_BITS(LED_PORT,LEDS_ON);
+  SET_BITS(LED_PORT,DOOR_LEDS_ON);
   Delay_ms(1000);
   // turn off both LEDs
-  CLR_BITS(LED_PORT, LEDS_OFF);
+  CLR_BITS(LED_PORT, DOOR_LEDS_OFF);
   
-  // configure red Leds as floor request indication
+  // configure floor request LEDs DDR to output
   SET_BITS(FLOOR_REQ_LEDS_DDR, DDRB_OUTPUT);
   // turn on red LEDs for 1 second
-  SET_BITS(FLOOR_REQ_LEDS_PORT, FLOOR_REQ_LEDS_ON);
+  SET_BITS(FLOOR_REQ_LEDS_PORT, LEDS_ON);
   Delay_ms(1000);
   // turn off red LEDs
-  CLR_BITS(FLOOR_REQ_LEDS_PORT, FLOOR_REQ_LEDS_OFF);
+  CLR_BITS(FLOOR_REQ_LEDS_PORT, LEDS_OFF);
+  
+  // configure floor status LED DDR to output
+  SET_BITS(FLOOR_STATUS_LEDS_DDR, DDRA_OUTPUT);
+  // turn on green LEDs for 1 second
+  SET_BITS(FLOOR_STATUS_LEDS_PORT, LEDS_ON);
+  Delay_ms(1000);
+  // turn off green LEDs
+  CLR_BITS(FLOOR_STATUS_LEDS_PORT, LEDS_OFF);
 }
 
 void 
@@ -99,47 +108,49 @@ main()
   MSCAN_ListenForMsg(EC_CAN_ID, 0);
   txdata[7] |= 0x05;
   for(;;)
-  {
-  
-    switch(READ_CAR_FLOOR_REQ)
-    {
-      case FLOOR_1:
-        txdata[7] | = FLOOR_1;
-        break;
-      
-      case FLOOR_2:
-        txdata[7] | = FLOOR_2;
-        break;
-        
-      case FLOOR_3:
-        txdata[7] | = FLOOR_3;
-        break;
-        
-      default:
-        txdata[7] |= FLOOR_NONE;
-        break;
-    }
-    
+  {   
    // poll for valid message flag
-    while(!MSCAN_GotMsg());
+   while(!MSCAN_GotMsg());
    // if valid message, read message
-    MSCAN_Getd(&rxMsg);
+   MSCAN_Getd(&rxMsg);
    
-    // check for message from elevator controller 
-    if(rxMsg.id == EC_CAN_ID)
-    {
-      // reset id for next message
-      rxMsg.id = 0;
-      // poll for a button request
-      while(!READ_CAR_FLOOR_REQ);
-      txdata[7] |= 0x06;
- 
-    } 
-    else
-    {
-     floor =0; 
-    }
+  // check for message from elevator controller 
+  if(rxMsg.id == EC_CAN_ID)
+  {
+    // reset id for next message
+    rxMsg.id = 0;
+  } 
+  else
+  {
+    // we have invalid message filter
+   floor =0; 
+  }
+
+  // poll for a valid floor selection
+  while(!floorSelected)
+  {
+   switch(READ_CAR_FLOOR_REQ)
+   {
+    case FLOOR_1:
+      txdata[7] |= FLOOR_1;
+      floorSelected = TRUE;
+      break;
+   
+    case FLOOR_2:
+      txdata[7] |= FLOOR_2;
+      floorSelected = TRUE;
+      break;
       
-       
+    case FLOOR_3:
+      txdata[7] |= FLOOR_3;
+      floorSelected = TRUE;
+      break;
+    
+    default:
+      txdata[7] |= FLOOR_NONE;
+      break;
+   }
+  }
+ 
   }
 }

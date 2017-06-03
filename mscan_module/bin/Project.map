@@ -25,8 +25,8 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x900     29
-  _Copy    *toCopyDownBeg 0xC1EA
+  _Range   pZeroOut       0x900     30
+  _Copy    *toCopyDownBeg 0xC235
 } _startupData;
 
 *********************************************************************************************
@@ -35,8 +35,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            397     R     0xC03B     0xC1C7   ROM_C000
-.copy                              2     R     0xC1EA     0xC1EB   ROM_C000
+.text                            452     R     0xC03B     0xC1FE   ROM_C000
+.copy                              2     R     0xC235     0xC236   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -259,14 +259,14 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_fc                    2   N/I       0xFC       0xFD   .absSeg218
 .abs_section_16e                   2   N/I      0x16E      0x16F   .absSeg219
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
-.bss                               6   R/W      0x900      0x905   RAM
-RUNTIME                           34     R     0xC1C8     0xC1E9   ROM_C000
-.common                           23   R/W      0x906      0x91C   RAM
+.bss                               7   R/W      0x900      0x906   RAM
+RUNTIME                           54     R     0xC1FF     0xC234   ROM_C000
+.common                           23   R/W      0x907      0x91D   RAM
 .vectSeg221_vect                   2     R     0xFFFE     0xFFFF   .vectSeg221
 
 Summary of section sizes per section type:
-READ_ONLY (R):         1EE (dec:      494)
-READ_WRITE (R/W):      11D (dec:      285)
+READ_ONLY (R):         239 (dec:      569)
+READ_WRITE (R/W):      11E (dec:      286)
 NO_INIT (N/I):         104 (dec:      260)
 
 *********************************************************************************************
@@ -464,8 +464,8 @@ MODULE:                 -- mc9s12c32.c.o --
      _RDRAD                                     273       1       1       0   .abs_section_273
      _PERAD                                     274       1       1       0   .abs_section_274
      _PPSAD                                     275       1       1       0   .abs_section_275
-     _PORTAB                                      0       2       2       2   .abs_section_0
-     _DDRAB                                       2       2       2       1   .abs_section_2
+     _PORTAB                                      0       2       2       4   .abs_section_0
+     _DDRAB                                       2       2       2       2   .abs_section_2
      _PARTID                                     1A       2       2       0   .abs_section_1a
      _DBGTB                                      22       2       2       0   .abs_section_22
      _DBGCC                                      26       2       2       0   .abs_section_26
@@ -513,8 +513,9 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                           900       0       0       1               
 MODULE:                 -- rtshc12.c.o (ansisi.lib) --
 - PROCEDURES:
-     _LSHL                                     C1C8      11      17       2   RUNTIME     
-     _LSHRU                                    C1D9      11      17       1   RUNTIME     
+     _LSHL                                     C1FF      11      17       2   RUNTIME     
+     _LSHRU                                    C210      11      17       1   RUNTIME     
+     _CASE_CHECKED_BYTE                        C221      14      20       1   RUNTIME     
 - VARIABLES:
 MODULE:                 -- mscan.c.o --
 - PROCEDURES:
@@ -526,13 +527,14 @@ MODULE:                 -- mscan.c.o --
      myIdBfr                                    900       4       4       3   .bss        
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     Delay_ms                                  C125      35      53       2   .text       
-     Init_Car_Controller                       C15A      26      38       1   .text       
-     main                                      C180      48      72       1   .text       
+     Delay_ms                                  C125      35      53       3   .text       
+     Init_Car_Controller                       C15A      34      52       1   .text       
+     main                                      C18E      71     113       1   .text       
 - VARIABLES:
      floor                                      904       2       2       1   .bss        
-     rxMsg                                      906       F      15       5   .common     
-     txdata                                     915       8       8       2   .common     
+     floorSelected                              906       1       1       2   .bss        
+     rxMsg                                      907       F      15       5   .common     
+     txdata                                     916       8       8       4   .common     
 
 *********************************************************************************************
 MODULE STATISTIC
@@ -540,9 +542,9 @@ MODULE STATISTIC
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
   Start12.c.o                                  0     49      0
-  rtshc12.c.o (ansisi.lib)                     0     34      0
+  rtshc12.c.o (ansisi.lib)                     0     54      0
   mscan.c.o                                    4    234      0
-  main.c.o                                    25    163      0
+  main.c.o                                    26    218      0
   other                                      256     12      2
 
 *********************************************************************************************
@@ -552,7 +554,7 @@ SECTION: ".text"
   MSCAN_Init MSCAN_ListenForMsg MSCAN_GotMsg MSCAN_Getd Delay_ms 
   Init_Car_Controller main 
 SECTION: ".bss"
-  myIdBfr floor 
+  myIdBfr floor floorSelected 
 SECTION: ".init"
   Init _Startup 
 SECTION: ".abs_section_8"
@@ -998,7 +1000,7 @@ SECTION: ".abs_section_16e"
 SECTION: ".abs_section_17e"
   _CANTXTSR 
 SECTION: "RUNTIME"
-  _LSHL _LSHRU 
+  _LSHL _LSHRU _CASE_CHECKED_BYTE 
 SECTION: ".common"
   rxMsg txdata 
 
@@ -1006,8 +1008,8 @@ SECTION: ".common"
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
-     _PORTAB                                      0       2       2       2   .abs_section_0
-     _DDRAB                                       2       2       2       1   .abs_section_2
+     _PORTAB                                      0       2       2       4   .abs_section_0
+     _DDRAB                                       2       2       2       2   .abs_section_2
      _PORTE                                       8       1       1       0   .abs_section_8
      _DDRE                                        9       1       1       0   .abs_section_9
      _PEAR                                        A       1       1       0   .abs_section_a
@@ -1229,19 +1231,21 @@ OBJECT LIST SORTED BY ADDRESS
      _PPSAD                                     275       1       1       0   .abs_section_275
      myIdBfr                                    900       4       4       3   .bss        
      floor                                      904       2       2       1   .bss        
-     rxMsg                                      906       F      15       5   .common     
-     txdata                                     915       8       8       2   .common     
+     floorSelected                              906       1       1       2   .bss        
+     rxMsg                                      907       F      15       5   .common     
+     txdata                                     916       8       8       4   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
      MSCAN_Init                                C03B      2A      42       1   .text       
      MSCAN_ListenForMsg                        C065      6F     111       1   .text       
      MSCAN_GotMsg                              C0D4       7       7       1   .text       
      MSCAN_Getd                                C0DB      4A      74       1   .text       
-     Delay_ms                                  C125      35      53       2   .text       
-     Init_Car_Controller                       C15A      26      38       1   .text       
-     main                                      C180      48      72       1   .text       
-     _LSHL                                     C1C8      11      17       2   RUNTIME     
-     _LSHRU                                    C1D9      11      17       1   RUNTIME     
+     Delay_ms                                  C125      35      53       3   .text       
+     Init_Car_Controller                       C15A      34      52       1   .text       
+     main                                      C18E      71     113       1   .text       
+     _LSHL                                     C1FF      11      17       2   RUNTIME     
+     _LSHRU                                    C210      11      17       1   RUNTIME     
+     _CASE_CHECKED_BYTE                        C221      14      20       1   RUNTIME     
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1251,9 +1255,8 @@ rtshc12.c.o (ansisi.lib):
   _BSHL _BSHRS _BSHRU _BDIVMODU _BDIVMODS _ISHL _ISHRU _ISHRS _LSHRS _LADD 
   _LSUB _LAND _LOR _LXOR _LCMP _LCMP_P _LCMP_PP _LNEG _LCOM _LINC _LDEC _LMUL 
   _LMULU16x32 _LMULS16x32 _lDivMod _LDIVU _NEG_P _LDIVS _LMODU _LMODS _ILSEXT 
-  _COPY _CASE_DIRECT _CASE_DIRECT_BYTE _CASE_CHECKED _CASE_CHECKED_BYTE 
-  _CASE_SEARCH _CASE_SEARCH_BYTE _CASE_SEARCH_8 _CASE_SEARCH_8_BYTE _FCALL 
-  _FPCMP 
+  _COPY _CASE_DIRECT _CASE_DIRECT_BYTE _CASE_CHECKED _CASE_SEARCH 
+  _CASE_SEARCH_BYTE _CASE_SEARCH_8 _CASE_SEARCH_8_BYTE _FCALL _FPCMP 
 mscan.c.o:
   MSCAN_Putd 
 NOT USED VARIABLES
@@ -1265,7 +1268,7 @@ main.c.o:
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC1EA ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC235 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1283,8 +1286,8 @@ Delay_ms                  USES _TSCR2 _TSCR1 _TIOS _TCTL1 _TCNT _TFLG1 _TC0
 Init_Car_Controller       USES _ATDDIEN _DDRAD _DDRS _PTS Delay_ms _DDRAB 
                                 _PORTAB 
 main                      USES Init_Car_Controller MSCAN_Init 
-                                MSCAN_ListenForMsg txdata MSCAN_GotMsg rxMsg MSCAN_Getd _PTAD 
-                                floor 
+                                MSCAN_ListenForMsg txdata MSCAN_GotMsg rxMsg MSCAN_Getd floor 
+                                _PTAD _CASE_CHECKED_BYTE floorSelected 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -1306,9 +1309,11 @@ DEPENDENCY TREE
  |  +- MSCAN_GotMsg        
  |  |    
  |  +- MSCAN_Getd          
- |     | 
- |     +- _LSHRU              
- |          
+ |  |  | 
+ |  |  +- _LSHRU              
+ |  |       
+ |  +- _CASE_CHECKED_BYTE  
+ |       
  +- _Startup            
     | 
     +- Init                
@@ -1321,6 +1326,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 6
-Total size of all blocks to be downloaded: 494
+Number of blocks to be downloaded: 5
+Total size of all blocks to be downloaded: 569
 
