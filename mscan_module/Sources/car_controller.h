@@ -5,6 +5,7 @@
 
 #define PTAD_AS_GPIO_MASK 0x07
 #define DDRAD_INIT  0x00
+#define PTAD_INIT 0xFF
 
 #define LED_PORT_DDR DDRS
 #define LED_PORT  PTS

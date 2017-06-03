@@ -25,8 +25,8 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x900     31
-  _Copy    *toCopyDownBeg 0xC263
+  _Range   pZeroOut       0x900     29
+  _Copy    *toCopyDownBeg 0xC1EA
 } _startupData;
 
 *********************************************************************************************
@@ -35,8 +35,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            518     R     0xC03B     0xC240   ROM_C000
-.copy                              2     R     0xC263     0xC264   ROM_C000
+.text                            397     R     0xC03B     0xC1C7   ROM_C000
+.copy                              2     R     0xC1EA     0xC1EB   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -259,14 +259,14 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_fc                    2   N/I       0xFC       0xFD   .absSeg218
 .abs_section_16e                   2   N/I      0x16E      0x16F   .absSeg219
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
-.bss                               4   R/W      0x900      0x903   RAM
-RUNTIME                           34     R     0xC241     0xC262   ROM_C000
-.common                           27   R/W      0x904      0x91E   RAM
+.bss                               6   R/W      0x900      0x905   RAM
+RUNTIME                           34     R     0xC1C8     0xC1E9   ROM_C000
+.common                           23   R/W      0x906      0x91C   RAM
 .vectSeg221_vect                   2     R     0xFFFE     0xFFFF   .vectSeg221
 
 Summary of section sizes per section type:
-READ_ONLY (R):         267 (dec:      615)
-READ_WRITE (R/W):      11F (dec:      287)
+READ_ONLY (R):         1EE (dec:      494)
+READ_WRITE (R/W):      11D (dec:      285)
 NO_INIT (N/I):         104 (dec:      260)
 
 *********************************************************************************************
@@ -370,11 +370,11 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANBTR1                                   143       1       1       1   .abs_section_143
      _CANRFLG                                   144       1       1       2   .abs_section_144
      _CANRIER                                   145       1       1       0   .abs_section_145
-     _CANTFLG                                   146       1       1       2   .abs_section_146
+     _CANTFLG                                   146       1       1       0   .abs_section_146
      _CANTIER                                   147       1       1       0   .abs_section_147
      _CANTARQ                                   148       1       1       0   .abs_section_148
      _CANTAAK                                   149       1       1       0   .abs_section_149
-     _CANTBSEL                                  14A       1       1       2   .abs_section_14a
+     _CANTBSEL                                  14A       1       1       0   .abs_section_14a
      _CANIDAC                                   14B       1       1       1   .abs_section_14b
      _CANRXERR                                  14E       1       1       0   .abs_section_14e
      _CANTXERR                                  14F       1       1       0   .abs_section_14f
@@ -407,11 +407,11 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANRXDSR6                                 16A       1       1       0   .abs_section_16a
      _CANRXDSR7                                 16B       1       1       0   .abs_section_16b
      _CANRXDLR                                  16C       1       1       1   .abs_section_16c
-     _CANTXIDR0                                 170       1       1       1   .abs_section_170
+     _CANTXIDR0                                 170       1       1       0   .abs_section_170
      _CANTXIDR1                                 171       1       1       0   .abs_section_171
      _CANTXIDR2                                 172       1       1       0   .abs_section_172
      _CANTXIDR3                                 173       1       1       0   .abs_section_173
-     _CANTXDSR0                                 174       1       1       1   .abs_section_174
+     _CANTXDSR0                                 174       1       1       0   .abs_section_174
      _CANTXDSR1                                 175       1       1       0   .abs_section_175
      _CANTXDSR2                                 176       1       1       0   .abs_section_176
      _CANTXDSR3                                 177       1       1       0   .abs_section_177
@@ -419,8 +419,8 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANTXDSR5                                 179       1       1       0   .abs_section_179
      _CANTXDSR6                                 17A       1       1       0   .abs_section_17a
      _CANTXDSR7                                 17B       1       1       0   .abs_section_17b
-     _CANTXDLR                                  17C       1       1       1   .abs_section_17c
-     _CANTXTBPR                                 17D       1       1       1   .abs_section_17d
+     _CANTXDLR                                  17C       1       1       0   .abs_section_17c
+     _CANTXTBPR                                 17D       1       1       0   .abs_section_17d
      _PTT                                       240       1       1       0   .abs_section_240
      _PTIT                                      241       1       1       0   .abs_section_241
      _DDRT                                      242       1       1       0   .abs_section_242
@@ -458,7 +458,7 @@ MODULE:                 -- mc9s12c32.c.o --
      _PPSJ                                      26D       1       1       0   .abs_section_26d
      _PIEJ                                      26E       1       1       0   .abs_section_26e
      _PIFJ                                      26F       1       1       0   .abs_section_26f
-     _PTAD                                      270       1       1       0   .abs_section_270
+     _PTAD                                      270       1       1       1   .abs_section_270
      _PTIAD                                     271       1       1       0   .abs_section_271
      _DDRAD                                     272       1       1       1   .abs_section_272
      _RDRAD                                     273       1       1       0   .abs_section_273
@@ -513,8 +513,8 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                           900       0       0       1               
 MODULE:                 -- rtshc12.c.o (ansisi.lib) --
 - PROCEDURES:
-     _LSHL                                     C241      11      17       4   RUNTIME     
-     _LSHRU                                    C252      11      17       1   RUNTIME     
+     _LSHL                                     C1C8      11      17       2   RUNTIME     
+     _LSHRU                                    C1D9      11      17       1   RUNTIME     
 - VARIABLES:
 MODULE:                 -- mscan.c.o --
 - PROCEDURES:
@@ -522,18 +522,17 @@ MODULE:                 -- mscan.c.o --
      MSCAN_ListenForMsg                        C065      6F     111       1   .text       
      MSCAN_GotMsg                              C0D4       7       7       1   .text       
      MSCAN_Getd                                C0DB      4A      74       1   .text       
-     MSCAN_Putd                                C125      81     129       1   .text       
 - VARIABLES:
      myIdBfr                                    900       4       4       3   .bss        
-     id                                         904       4       4       2   .common     
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     Delay_ms                                  C1A6      35      53       3   .text       
-     Init_Car_Controller                       C1DB      27      39       1   .text       
-     main                                      C202      3F      63       1   .text       
+     Delay_ms                                  C125      35      53       2   .text       
+     Init_Car_Controller                       C15A      26      38       1   .text       
+     main                                      C180      48      72       1   .text       
 - VARIABLES:
-     rxMsg                                      908       F      15       1   .common     
-     txdata                                     917       8       8       2   .common     
+     floor                                      904       2       2       1   .bss        
+     rxMsg                                      906       F      15       5   .common     
+     txdata                                     915       8       8       2   .common     
 
 *********************************************************************************************
 MODULE STATISTIC
@@ -542,18 +541,18 @@ MODULE STATISTIC
   mc9s12c32.c.o                              260      0      0
   Start12.c.o                                  0     49      0
   rtshc12.c.o (ansisi.lib)                     0     34      0
-  mscan.c.o                                    8    363      0
-  main.c.o                                    23    155      0
+  mscan.c.o                                    4    234      0
+  main.c.o                                    25    163      0
   other                                      256     12      2
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  MSCAN_Init MSCAN_ListenForMsg MSCAN_GotMsg MSCAN_Getd MSCAN_Putd Delay_ms 
+  MSCAN_Init MSCAN_ListenForMsg MSCAN_GotMsg MSCAN_Getd Delay_ms 
   Init_Car_Controller main 
 SECTION: ".bss"
-  myIdBfr 
+  myIdBfr floor 
 SECTION: ".init"
   Init _Startup 
 SECTION: ".abs_section_8"
@@ -1001,7 +1000,7 @@ SECTION: ".abs_section_17e"
 SECTION: "RUNTIME"
   _LSHL _LSHRU 
 SECTION: ".common"
-  id rxMsg txdata 
+  rxMsg txdata 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
@@ -1132,11 +1131,11 @@ OBJECT LIST SORTED BY ADDRESS
      _CANBTR1                                   143       1       1       1   .abs_section_143
      _CANRFLG                                   144       1       1       2   .abs_section_144
      _CANRIER                                   145       1       1       0   .abs_section_145
-     _CANTFLG                                   146       1       1       2   .abs_section_146
+     _CANTFLG                                   146       1       1       0   .abs_section_146
      _CANTIER                                   147       1       1       0   .abs_section_147
      _CANTARQ                                   148       1       1       0   .abs_section_148
      _CANTAAK                                   149       1       1       0   .abs_section_149
-     _CANTBSEL                                  14A       1       1       2   .abs_section_14a
+     _CANTBSEL                                  14A       1       1       0   .abs_section_14a
      _CANIDAC                                   14B       1       1       1   .abs_section_14b
      _CANRXERR                                  14E       1       1       0   .abs_section_14e
      _CANTXERR                                  14F       1       1       0   .abs_section_14f
@@ -1170,11 +1169,11 @@ OBJECT LIST SORTED BY ADDRESS
      _CANRXDSR7                                 16B       1       1       0   .abs_section_16b
      _CANRXDLR                                  16C       1       1       1   .abs_section_16c
      _CANRXTSR                                  16E       2       2       0   .abs_section_16e
-     _CANTXIDR0                                 170       1       1       1   .abs_section_170
+     _CANTXIDR0                                 170       1       1       0   .abs_section_170
      _CANTXIDR1                                 171       1       1       0   .abs_section_171
      _CANTXIDR2                                 172       1       1       0   .abs_section_172
      _CANTXIDR3                                 173       1       1       0   .abs_section_173
-     _CANTXDSR0                                 174       1       1       1   .abs_section_174
+     _CANTXDSR0                                 174       1       1       0   .abs_section_174
      _CANTXDSR1                                 175       1       1       0   .abs_section_175
      _CANTXDSR2                                 176       1       1       0   .abs_section_176
      _CANTXDSR3                                 177       1       1       0   .abs_section_177
@@ -1182,8 +1181,8 @@ OBJECT LIST SORTED BY ADDRESS
      _CANTXDSR5                                 179       1       1       0   .abs_section_179
      _CANTXDSR6                                 17A       1       1       0   .abs_section_17a
      _CANTXDSR7                                 17B       1       1       0   .abs_section_17b
-     _CANTXDLR                                  17C       1       1       1   .abs_section_17c
-     _CANTXTBPR                                 17D       1       1       1   .abs_section_17d
+     _CANTXDLR                                  17C       1       1       0   .abs_section_17c
+     _CANTXTBPR                                 17D       1       1       0   .abs_section_17d
      _CANTXTSR                                  17E       2       2       0   .abs_section_17e
      _PTT                                       240       1       1       0   .abs_section_240
      _PTIT                                      241       1       1       0   .abs_section_241
@@ -1222,28 +1221,27 @@ OBJECT LIST SORTED BY ADDRESS
      _PPSJ                                      26D       1       1       0   .abs_section_26d
      _PIEJ                                      26E       1       1       0   .abs_section_26e
      _PIFJ                                      26F       1       1       0   .abs_section_26f
-     _PTAD                                      270       1       1       0   .abs_section_270
+     _PTAD                                      270       1       1       1   .abs_section_270
      _PTIAD                                     271       1       1       0   .abs_section_271
      _DDRAD                                     272       1       1       1   .abs_section_272
      _RDRAD                                     273       1       1       0   .abs_section_273
      _PERAD                                     274       1       1       0   .abs_section_274
      _PPSAD                                     275       1       1       0   .abs_section_275
      myIdBfr                                    900       4       4       3   .bss        
-     id                                         904       4       4       2   .common     
-     rxMsg                                      908       F      15       1   .common     
-     txdata                                     917       8       8       2   .common     
+     floor                                      904       2       2       1   .bss        
+     rxMsg                                      906       F      15       5   .common     
+     txdata                                     915       8       8       2   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
      MSCAN_Init                                C03B      2A      42       1   .text       
      MSCAN_ListenForMsg                        C065      6F     111       1   .text       
      MSCAN_GotMsg                              C0D4       7       7       1   .text       
      MSCAN_Getd                                C0DB      4A      74       1   .text       
-     MSCAN_Putd                                C125      81     129       1   .text       
-     Delay_ms                                  C1A6      35      53       3   .text       
-     Init_Car_Controller                       C1DB      27      39       1   .text       
-     main                                      C202      3F      63       1   .text       
-     _LSHL                                     C241      11      17       4   RUNTIME     
-     _LSHRU                                    C252      11      17       1   RUNTIME     
+     Delay_ms                                  C125      35      53       2   .text       
+     Init_Car_Controller                       C15A      26      38       1   .text       
+     main                                      C180      48      72       1   .text       
+     _LSHL                                     C1C8      11      17       2   RUNTIME     
+     _LSHRU                                    C1D9      11      17       1   RUNTIME     
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1256,16 +1254,18 @@ rtshc12.c.o (ansisi.lib):
   _COPY _CASE_DIRECT _CASE_DIRECT_BYTE _CASE_CHECKED _CASE_CHECKED_BYTE 
   _CASE_SEARCH _CASE_SEARCH_BYTE _CASE_SEARCH_8 _CASE_SEARCH_8_BYTE _FCALL 
   _FPCMP 
+mscan.c.o:
+  MSCAN_Putd 
 NOT USED VARIABLES
 rtshc12.c.o (ansisi.lib):
   _PowOfTwo_8 _PowOfTwo_16 _PowOfTwo_32 errno 
 main.c.o:
-  retCode floor led rxdata 
+  retCode led rxdata 
 
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC263 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC1EA ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1278,16 +1278,13 @@ MSCAN_Init                USES _CANCTL1 _CANCTL0 _CANBTR0 _CANBTR1
 MSCAN_ListenForMsg        USES _CANCTL0 _CANCTL1 _CANIDAC _LSHL myIdBfr 
                                 _CANIDAR0 
 MSCAN_GotMsg              USES _CANRFLG 
-MSCAN_Getd                USES _CANRXIDR0 _LSHRU id _CANRXDLR _CANRXDSR0 
-                                _CANRFLG 
-MSCAN_Putd                USES _CANTFLG _CANTBSEL _LSHL _CANTXIDR0 _CANTXDSR0 
-                                _CANTXDLR _CANTXTBPR 
+MSCAN_Getd                USES _CANRXIDR0 _LSHRU _CANRXDLR _CANRXDSR0 _CANRFLG 
 Delay_ms                  USES _TSCR2 _TSCR1 _TIOS _TCTL1 _TCNT _TFLG1 _TC0 
 Init_Car_Controller       USES _ATDDIEN _DDRAD _DDRS _PTS Delay_ms _DDRAB 
                                 _PORTAB 
 main                      USES Init_Car_Controller MSCAN_Init 
-                                MSCAN_ListenForMsg txdata MSCAN_GotMsg rxMsg MSCAN_Getd Delay_ms 
-                                MSCAN_Putd 
+                                MSCAN_ListenForMsg txdata MSCAN_GotMsg rxMsg MSCAN_Getd _PTAD 
+                                floor 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -1309,15 +1306,9 @@ DEPENDENCY TREE
  |  +- MSCAN_GotMsg        
  |  |    
  |  +- MSCAN_Getd          
- |  |  | 
- |  |  +- _LSHRU              
- |  |       
- |  +- Delay_ms             (see above)
- |  |  
- |  +- MSCAN_Putd          
  |     | 
- |     +- _LSHL                (see above)
- |        
+ |     +- _LSHRU              
+ |          
  +- _Startup            
     | 
     +- Init                
@@ -1331,5 +1322,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 6
-Total size of all blocks to be downloaded: 615
+Total size of all blocks to be downloaded: 494
 

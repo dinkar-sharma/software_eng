@@ -70,10 +70,10 @@ Init_Car_Controller()
 {
   // configure button DDR
   // configure PTAD to PIM module/as a GPIO
-  ATDDIEN = PTAD_AS_GPIO_MASK;
+  SET_BITS(ATDDIEN, PTAD_AS_GPIO_MASK);
   //configure digital input for limit switches  
-  DDRAD   = DDRAD_INIT;         
-  
+  DDRAD   = DDRAD_INIT;      
+   
   // configure LED port data direction to output
   SET_BITS(LED_PORT_DDR, LEDS_ON);
   // turn on both LEDs
@@ -100,11 +100,46 @@ main()
   txdata[7] |= 0x05;
   for(;;)
   {
-    if(MSCAN_GotMsg())
+  
+    switch(READ_CAR_FLOOR_REQ)
     {
-      MSCAN_Getd(&rxMsg);
-      Delay_ms(400);
-      MSCAN_Putd(CC_CAN_ID,&(txdata[0] ), 8, 0,0);
+      case FLOOR_1:
+        txdata[7] | = FLOOR_1;
+        break;
+      
+      case FLOOR_2:
+        txdata[7] | = FLOOR_2;
+        break;
+        
+      case FLOOR_3:
+        txdata[7] | = FLOOR_3;
+        break;
+        
+      default:
+        txdata[7] |= FLOOR_NONE;
+        break;
     }
+    
+   // poll for valid message flag
+    while(!MSCAN_GotMsg());
+   // if valid message, read message
+    MSCAN_Getd(&rxMsg);
+   
+    // check for message from elevator controller 
+    if(rxMsg.id == EC_CAN_ID)
+    {
+      // reset id for next message
+      rxMsg.id = 0;
+      // poll for a button request
+      while(!READ_CAR_FLOOR_REQ);
+      txdata[7] |= 0x06;
+ 
+    } 
+    else
+    {
+     floor =0; 
+    }
+      
+       
   }
 }

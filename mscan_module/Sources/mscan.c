@@ -5,7 +5,6 @@
 #include "bit_fiddling.h"
 
 unsigned long myIdBfr = 0;
-unsigned long id;
 
 void
 MSCAN_Init(void) {
@@ -75,7 +74,7 @@ int i;
 unsigned char * dataPtr;
 
 thisMsg->id = *(unsigned long *)(&CANRXIDR0);
-id = (thisMsg->id) >> 21;
+thisMsg->id >>= 21;
 
 thisMsg->length = CANRXDLR;
 dataPtr = (unsigned char *)(&CANRXDSR0);
