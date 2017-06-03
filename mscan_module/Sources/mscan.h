@@ -1,5 +1,5 @@
-#ifndef _MSCAN_H
-#define _MSCAN_H
+#ifndef _MSCAN_H_
+#define _MSCAN_H_
   
 
 /*CANTCL1 register*
@@ -26,17 +26,20 @@
 
 #define ERR_BUFFER_FULL         1
 
-/*Acceptance filter*/
-CANIDAR0 
-
-
-typedef struct msgFrame
+typedef struct CANmsg
 {
   unsigned long id;
   unsigned char length;
-  unsigned char *txdata;
-}*CANmsg_t;
-
+  unsigned char rxdata[8];
+  unsigned char rtr;
+  unsigned char priority;
+}CANmsg_t;
 
 extern void MSCAN_Init(void);
+extern void Init_CAN_Msg(CANmsg_t msgPtr);
+extern void MSCAN_ListenForMsg( unsigned long id, unsigned char rtr); 
+extern int MSCAN_GotMsg(void);
+extern void MSCAN_Getd( CANmsg_t * thisMsg );
+extern int MSCAN_Putd(unsigned long id, unsigned char * data, unsigned char length, unsigned char priority, unsigned char rtr);
+
 #endif
