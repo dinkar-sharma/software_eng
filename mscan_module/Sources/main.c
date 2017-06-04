@@ -8,13 +8,12 @@
 #include "bit_fiddling.h"
 #include "utils.h"
 
-volatile int floor = 0;
-int led = 0;
 int retCode = 1;
 unsigned char floorSelected = FALSE;
 CANmsg_t rxMsg;
-unsigned char rxdata[8];
+unsigned char currentFloor;
 unsigned char txdata[8];
+volatile unsigned char data[8];
 
 // Delay_ms()
 // wait for specified # of ms, then return
@@ -107,50 +106,95 @@ main()
   MSCAN_Init();
   MSCAN_ListenForMsg(EC_CAN_ID, 0);
   txdata[7] |= 0x05;
+  
   for(;;)
-  {   
-   // poll for valid message flag
-   while(!MSCAN_GotMsg());
-   // if valid message, read message
-   MSCAN_Getd(&rxMsg);
-   
-  // check for message from elevator controller 
-  if(rxMsg.id == EC_CAN_ID)
-  {
-    // reset id for next message
-    rxMsg.id = 0;
-  } 
-  else
-  {
-    // we have invalid message filter
-   floor =0; 
-  }
+  {  
+    // poll for valid message flag
+    while(!MSCAN_GotMsg());
+    // if valid message, read message
+    MSCAN_Getd(&rxMsg);
+    
+    // check for message from elevator controller 
+    if(rxMsg.id == EC_CAN_ID)
+    {
+      // reset id for next message
+      rxMsg.id = 0;
+      
+      // copy data to local variable
+      currentFloor = (rxMsg.rxdata[7] & 0x03);
 
-  // poll for a valid floor selection
-  while(!floorSelected)
-  {
-   switch(READ_CAR_FLOOR_REQ)
-   {
+        // turn on the elevator status LEDs
+      if(currentFloor == FLOOR_1)
+      {
+        SET_BITS(FLOOR_STATUS_LEDS_PORT, FLOOR_STATUS_LED_1);
+        CLR_BITS(FLOOR_STATUS_LEDS_PORT,(FLOOR_STATUS_LED_2|FLOOR_STATUS_LED_3));
+        CLR_BITS(FLOOR_REQ_LEDS_PORT,FLOOR_REQ_LED_1);   
+      } 
+      else if(currentFloor == FLOOR_2)
+      {
+        SET_BITS(FLOOR_STATUS_LEDS_PORT, FLOOR_STATUS_LED_2);
+        CLR_BITS(FLOOR_STATUS_LEDS_PORT,(FLOOR_STATUS_LED_1|FLOOR_STATUS_LED_3));
+        CLR_BITS(FLOOR_REQ_LEDS_PORT,FLOOR_REQ_LED_2);  
+      }
+      else
+      {
+        SET_BITS(FLOOR_STATUS_LEDS_PORT, FLOOR_STATUS_LED_3);
+        CLR_BITS(FLOOR_STATUS_LEDS_PORT,(FLOOR_STATUS_LED_1|FLOOR_STATUS_LED_2));
+        CLR_BITS(FLOOR_REQ_LEDS_PORT,FLOOR_REQ_LED_3);    
+      }
+    }
+
+    // poll for a valid floor selection
+    switch(READ_CAR_FLOOR_REQ)
+    {
     case FLOOR_1:
       txdata[7] |= FLOOR_1;
-      floorSelected = TRUE;
+      SET_BITS(FLOOR_REQ_LEDS_PORT, FLOOR_REQ_LED_1);   
+      floorSelected = TRUE; 
       break;
-   
+
     case FLOOR_2:
       txdata[7] |= FLOOR_2;
+      SET_BITS(FLOOR_REQ_LEDS_PORT, FLOOR_REQ_LED_2);
       floorSelected = TRUE;
       break;
-      
+
     case FLOOR_3:
       txdata[7] |= FLOOR_3;
+      SET_BITS(FLOOR_REQ_LEDS_PORT, FLOOR_REQ_LED_3);
       floorSelected = TRUE;
       break;
-    
+
     default:
-      txdata[7] |= FLOOR_NONE;
+      //txdata[7] |= FLOOR_NONE;
       break;
+    }
+    
+    // if floor requested, send CAN message 
+    if(txdata[7])
+    {
+      retCode = MSCAN_Putd(CC_CAN_ID, &(txdata[0]), 8, 0, 0);
+      currentFloor = 0;
+      txdata[7] = 0; 
+    }
+    
+    floorSelected = FALSE;
+    Delay_ms(100);
    }
+}
+
+interrupt VectorNumber_Vcanrx void CAN_Receive(void)
+{
+  unsigned char length, index;
+  unsigned char data[8];
+  
+  length = (CANRXDLR & 0x0F);
+  
+  for(index = 0; index < length; index++)
+  {
+    data[index] = *(&CANRXDSR0 + index);
   }
- 
-  }
+  
+  CANRFLG = 0x01;
+  
 }

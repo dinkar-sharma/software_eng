@@ -17,9 +17,9 @@
 #define FLOOR_REQ_LEDS_DDR  DDRB
 #define FLOOR_REQ_LEDS_PORT PORTB
 #define DDRB_OUTPUT         0x07
-#define FLOOR_LED_1         PORTB_BIT0_MASK
-#define FLOOR_LED_2         PORTB_BIT1_MASK
-#define FLOOR_LED_3         PORTB_BIT2_MASK
+#define FLOOR_REQ_LED_1         PORTB_BIT0_MASK
+#define FLOOR_REQ_LED_2         PORTB_BIT1_MASK
+#define FLOOR_REQ_LED_3         PORTB_BIT2_MASK
 #define LEDS_ON             0x07
 #define LEDS_OFF            0x07
 
