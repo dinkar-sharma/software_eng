@@ -1,10 +1,11 @@
 import socket
 import sys
-
+import pickle
 
 serverName = '127.0.0.1'
-serverPort = 64000
+serverPort = 10000
 serverSocket = None
+repoFilePath = "/home/terminator0o0/dev/software_eng/socket_assignment/repo_data.txt"
 
 for res in socket.getaddrinfo(serverName, serverPort, socket.AF_INET, 
 							 socket.SOCK_STREAM):
@@ -37,6 +38,15 @@ while(1):
 	data = connectionSocket.recv(1024)
 	if not data:
 		break
+
 	connectionSocket.send(data)
+
+	rcvData = vars(pickle.loads(data))
+	print rcvData
+	# write to flat text file
+	with open(repoFilePath, 'w') as repoFile:
+		for key, value in repoFile:
+			
+	print("Wrote to data file!")
 	
 serverSocket.close()
