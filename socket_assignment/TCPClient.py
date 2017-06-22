@@ -1,10 +1,10 @@
 import socket
 import sys
 import argparse
-import pickle
+import json
 
 serverName = '127.0.0.1'
-serverPort = 10000
+serverPort = 5000
 clientSocket = None
 
 
@@ -31,11 +31,11 @@ def Send_TCP_Request(msgObject):
         print("Failed to open socket {}".format(serverPort))
         sys.exit(1)
 
-    clientSocket.sendall(msgObject)
-    data = pickle.loads(clientSocket.recv(1024))
-    clientSocket.close()
-
-    print("Recieved {}".format(repr(data)))
+    try:
+        clientSocket.sendall(msgObject)
+        clientSocket.close()
+    except socket.error as msg:
+        raise
 
 def Get_User_Input():
     parser = argparse.ArgumentParser(prog="TCPClient.py", description="TCP client socket communication")
@@ -58,17 +58,17 @@ if __name__ == "__main__":
 
     # get user input from terminal
     userInputObj = Get_User_Input()
-    #dataToSend = vars(userInputObj)
-    # convert 
-    name = ''.join(userInputObj.name)
-    id = userInputObj.id
-    # check for alphabets in name only
-    if not name.isalpha():        
-        raise  TypeError("Name is not a valid string!")
+    # serializing the input user object
+    encodeJsonData = json.dumps(vars(userInputObj), separators=(',',':'))
 
-    dataToSend = pickle.dumps(userInputObj)
-    print userInputObj
-    Send_TCP_Request(dataToSend)
+    # check for alphabets in name only
+    # if not name.isalpha():        
+    #     raise  TypeError("Name is not a valid string!")
+
+    try:
+        Send_TCP_Request(encodeJsonData)
+    except socket.error as msg:
+        raise
     
     sys.exit(0)
 

@@ -1,11 +1,13 @@
 import socket
 import sys
-import pickle
+import json
 
 serverName = '127.0.0.1'
-serverPort = 10000
+serverPort = 5000
 serverSocket = None
 repoFilePath = "/home/terminator0o0/dev/software_eng/socket_assignment/repo_data.txt"
+nameList = []
+idList = []
 
 for res in socket.getaddrinfo(serverName, serverPort, socket.AF_INET, 
 							 socket.SOCK_STREAM):
@@ -32,21 +34,34 @@ if serverSocket is None:
 
 print "The server is ready to receive"
 (connectionSocket, address) = serverSocket.accept()
-print("Connected by {}".format(address))
+print("Connected by [{}]".format(address))
 
 while(1):
-	data = connectionSocket.recv(1024)
-	if not data:
+	try:
+		rcvData = connectionSocket.recv(1024)
+	except socket.error as msg:
+		break
+	
+	if not rcvData:
 		break
 
-	connectionSocket.send(data)
+	decodeRcvData = json.loads(rcvData)
 
-	rcvData = vars(pickle.loads(data))
-	print rcvData
+	print("Server recieved data: [{}]".format(rcvData))
+
 	# write to flat text file
-	with open(repoFilePath, 'w') as repoFile:
-		for key, value in repoFile:
-			
-	print("Wrote to data file!")
+	with open(repoFilePath, 'a') as repoFile:
+		# iterating over user data and writing to file
+		for key, value in decodeRcvData.iteritems():
+			if key is "name":
+				nameList.append(value)
+			if key is "id":
+				idList.append(value)
+		repoFile.write(str(nameList))
+		repoFile.write(str(idList))
+	try:
+		connectionSocket.send(rcvData)
+	except socket.error as msg:
+		break
 	
 serverSocket.close()
