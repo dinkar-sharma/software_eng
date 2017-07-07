@@ -11,9 +11,10 @@
 int retCode = 1;
 unsigned char floorSelected = FALSE;
 CANmsg_t rxMsg;
-unsigned char currentFloor;
+volatile unsigned char currentFloor;
 unsigned char txdata[8];
-volatile unsigned char data[8];
+//volatile unsigned char data[8];
+volatile unsigned char doorState;
 
 // Delay_ms()
 // wait for specified # of ms, then return
@@ -72,7 +73,10 @@ Init_Car_Controller()
   // configure PTAD to PIM module/as a GPIO
   SET_BITS(ATDDIEN, PTAD_AS_GPIO_MASK);
   //configure digital input for limit switches  
-  DDRAD   = DDRAD_INIT;      
+  DDRAD   = DDRAD_INIT;
+  
+  // configure door state DDR to input
+  CLR_BITS(DOOR_STATE_DDR,DDRJ_INIT);   
    
   // configure floor request LED port data direction to output
   SET_BITS(LED_PORT_DDR, DOOR_LEDS_ON);
@@ -97,6 +101,8 @@ Init_Car_Controller()
   Delay_ms(1000);
   // turn off green LEDs
   CLR_BITS(FLOOR_STATUS_LEDS_PORT, LEDS_OFF);
+ 
+  SET_BITS(LED_PORT,LED_1_ON); 
 }
 
 void 
@@ -105,8 +111,9 @@ main()
   Init_Car_Controller();
   MSCAN_Init();
   MSCAN_ListenForMsg(EC_CAN_ID, 0);
-  txdata[7] |= 0x05;
-  
+  txdata[0] |= 0;
+  doorState = OPEN;
+
   for(;;)
   {  
     // poll for valid message flag
@@ -121,26 +128,33 @@ main()
       rxMsg.id = 0;
       
       // copy data to local variable
-      currentFloor = (rxMsg.rxdata[7] & 0x03);
+      currentFloor = (rxMsg.rxdata[0] & 0x03);
 
-        // turn on the elevator status LEDs
+      // elevator is on the first floor
       if(currentFloor == FLOOR_1)
       {
         SET_BITS(FLOOR_STATUS_LEDS_PORT, FLOOR_STATUS_LED_1);
         CLR_BITS(FLOOR_STATUS_LEDS_PORT,(FLOOR_STATUS_LED_2|FLOOR_STATUS_LED_3));
         CLR_BITS(FLOOR_REQ_LEDS_PORT,FLOOR_REQ_LED_1);   
       } 
+      // elevator is on the second floor
       else if(currentFloor == FLOOR_2)
       {
         SET_BITS(FLOOR_STATUS_LEDS_PORT, FLOOR_STATUS_LED_2);
         CLR_BITS(FLOOR_STATUS_LEDS_PORT,(FLOOR_STATUS_LED_1|FLOOR_STATUS_LED_3));
         CLR_BITS(FLOOR_REQ_LEDS_PORT,FLOOR_REQ_LED_2);  
       }
-      else
+      // elevator is on the third floor
+      else if(currentFloor == 0x03)
       {
         SET_BITS(FLOOR_STATUS_LEDS_PORT, FLOOR_STATUS_LED_3);
         CLR_BITS(FLOOR_STATUS_LEDS_PORT,(FLOOR_STATUS_LED_1|FLOOR_STATUS_LED_2));
         CLR_BITS(FLOOR_REQ_LEDS_PORT,FLOOR_REQ_LED_3);    
+      }
+      else
+      {
+       // elevator is moving
+       continue;
       }
     }
 
@@ -166,24 +180,44 @@ main()
       break;
 
     default:
-      //txdata[7] |= FLOOR_NONE;
+      txdata[7] |= FLOOR_NONE;
+      
       break;
     }
     
     // if floor requested, send CAN message 
-    if(txdata[7])
+    if(floorSelected)
     {
+      //Delay_ms(1000);
+      // LED 1 is on and LED 2 is off, door is open
+      if(READ_DOOR_STATE == LED_1_ON)
+      {
+        //while(BIT_IS_CLR(DOOR_STATE_PORT, DOOR_BUTTON_OPEN));
+        // Checking for door close button (SW2)
+        if(BIT_IS_CLR(DOOR_STATE_PORT, 0x80))
+        {
+          doorState = CLOSE;
+          CLR_BITS(LED_PORT, LED_1_ON);
+          SET_BITS(LED_PORT, LED_2_ON); 
+        }
+      } 
+      else 
+      {
+         Delay_ms(1000);
+         doorState = CLOSE;
+         CLR_BITS(LED_PORT, LED_1_ON);
+         SET_BITS(LED_PORT, LED_2_ON);
+      }
       retCode = MSCAN_Putd(CC_CAN_ID, &(txdata[0]), 8, 0, 0);
       currentFloor = 0;
-      txdata[7] = 0; 
+      txdata[7] = 0;
+      floorSelected = FALSE;
     }
-    
-    floorSelected = FALSE;
     Delay_ms(100);
    }
 }
 
-interrupt VectorNumber_Vcanrx void CAN_Receive(void)
+/*interrupt VectorNumber_Vcanrx void CAN_Receive(void)
 {
   unsigned char length, index;
   unsigned char data[8];
@@ -197,4 +231,4 @@ interrupt VectorNumber_Vcanrx void CAN_Receive(void)
   
   CANRFLG = 0x01;
   
-}
+}     */

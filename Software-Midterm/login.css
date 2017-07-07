@@ -1,0 +1,36 @@
+legend
+{
+	background-color: #464A69;
+	color: white;
+	width: 153px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+body
+{
+	background-color: lavender;
+}
+
+fieldset
+{
+	padding: .35em .625em .75em;
+    margin: 0 2px;
+    border: 1px solid silver;
+}
+
+.btn-default
+{
+	float: right;
+}
+
+.btn-default:hover
+{
+	background-color: #464A69;
+	color: white;
+}
+
+.msg
+{
+	color: red;
+}

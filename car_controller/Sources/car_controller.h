@@ -13,6 +13,7 @@
 #define DOOR_LEDS_OFF (PTS_PTS2_MASK | PTS_PTS3_MASK)
 #define LED_1_ON  PTS_PTS2_MASK
 #define LED_2_ON  PTS_PTS3_MASK
+#define READ_DOOR_STATE (PTS & 0x0C)
 
 #define FLOOR_REQ_LEDS_DDR  DDRB
 #define FLOOR_REQ_LEDS_PORT PORTB
@@ -29,10 +30,14 @@
 #define FLOOR_STATUS_LED_1 0x01
 #define FLOOR_STATUS_LED_2 0x02
 #define FLOOR_STATUS_LED_3 0x04
- 
-#define DOOR_STATE_OPEN 0x00
-#define DOOR_STATE_CLOSE 0x01
-#define CURRENT_DOOR_STATE 0x00
+
+#define DOOR_STATE_DDR  DDRJ
+#define DOOR_STATE_PORT PTJ
+#define DDRJ_INIT       0xC0
+#define OPEN            0x00
+#define CLOSE           0x01
+#define DOOR_BUTTON_OPEN 0x80
+#define DOOR_BUTTON_CLOSE 0x40
 
 #define FLOOR_NONE 0x00
 #define FLOOR_1    0x01

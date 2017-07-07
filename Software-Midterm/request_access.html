@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Access</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="no-cache" http-equiv="pragma">
+    <meta content="no-cache" http-equiv="cache-control"><!-- Latest compiled and minified CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="request_access.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Dinkar's Software Midterm</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="login.html">Login</a>
+                </li>
+                <li>
+                    <a href="request_access.html">Request Access</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <form id="requestAccess" class="form-horizontal" method="post" action="request_access.php">
+            <fieldset>
+                <legend>Request Access</legend>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="username">Username:</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="username" name="username" placeholder="Enter Username" required="" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="password">Password:</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="password" name="password" required="" type="password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label><input type="checkbox"> Remember me</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-6">
+                        <button class="btn btn-default" id="myBtn" type="submit">Add me</button>
+                    </div>
+                </div>
+                <div class="msg">
+                    <p id="usernameMsg"></p>
+                    <p id="passwordMsg"></p>
+                </div>
+            </fieldset>
+        </form>
+        <script src="event_listener.js">
+        </script>
+    </div>
+</body>
+</html>
